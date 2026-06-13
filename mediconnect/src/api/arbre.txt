@@ -1,0 +1,28 @@
+Folder PATH listing
+Volume serial number is B2D1-C348
+C:.
+|   arbre.txt
+|   
+\---files
+        alertes.api.js
+        auth.api.js
+        AuthContext.jsx
+        client.js
+        consentements.api.js
+        consultations.api.js
+        dossiers.api.js
+        examens.api.js
+        files.txt
+        ForgotPasswordPage.jsx
+        index.js
+        infirmiers.api.js
+        INTEGRATION_GUIDE.md
+        LoginPage.jsx
+        medecins.api.js
+        ordonnances.api.js
+        OTPPage.jsx
+        patients.api.js
+        rendezvous.api.js
+        transferts.api.js
+        usePatients.js
+        

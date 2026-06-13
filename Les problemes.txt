@@ -1,0 +1,74 @@
+Les problemes :
+Un patient ne doit pas creer d'ordonnances ni voir les ordonnances des autres patients
+Un patient de doit pas voir l'agenda des rendez-vous des autres patients
+Sur tous les profils mis a part le profil patient, on a mis 
+Dr. A. Diallo
+Cardiologie · HGGY et ce n'est pas normal, certains sont infirmiers, d'autres administrateurs
+
+En plus de la region, il faut donner la possibilité de préciser le department/la commune a la creation du patient pour apporter plus d'informations cote cartographie
+
+
+Je ne vois nulle part l'option créer une consultation
+
+Pages a ajouter : petit popup pour demander si le patient consent a nous laisser utiliser ses données médicales 
+
+Ne pas créer de page d’inscription pour le patient (comme ce qu’on a fait avec les autres utilisateurs) 
+Avoir un bouton créer patient dans l’interface de l’accueil 
+Donner à un patient le droit de faire une demande pour fermer son compte, supprimer ses données de la plate-forme, Demander ses données 
+Donner la possibilité au patient de demander un rendez-vous et si le médecin n’est pas disponible, proposer une autre date 
+
+Icône supprimer ligne prescription quand on prescrit une ordonnance 
+Donner à l’administration la possibilité de modifier les champs dans la page d’administration
+
+
+Ces boutons ne fonctionnent pas :
+Ajouter etablissement page admin
+Ouvrir etablissement page médecin 
+Initier transfert page médecin 
+Voir CR page médecin 
+Marquer complété page médecin 
+
+
+Le lien jitsi meet n'est pas généré a la creation d'une consultation ou d'un rendez-vous de type video
+
+Je ne vois pas la liste des médecins pour en selectionner un lors d'un rendez-vous, je vais essayer de créer un nouveau compte medecin
+
+Un medecin (radiologie) voit la liste des patients d'un medecin qui appartient a un service different (ophtalmologie par exemple), ce n'est pas normal.
+
+Pour les transferts, le dropdown indique une liste d'hôpitaux differente de celle que j'ai en base.
+
+
+
+
+Je veux ajouter une colonne "mail" prerempli avec des mails générés a partir de leurs nom et prenom suivi de @medisen.sn a la table de l'ordre des medecins pour securiser leur connexion. Je veux aussi ajouter la colonne "Localisation" qui indique l'hopital ou il travaille dans la table ordre_medecins de ma base. Tu peux te baser sur ce tableau sur internet pour ajouter les bonnes informations sur la table https://www.ordremedecins.sn/tableau/.
+
+Lors de l'inscription d'un medecin, actuellement j'ai la possibilité de renseigner des informations qui ne sont pas conformes a ce qui se trouve sur la table ordre_medecins, ce n'est pas normal.
+
+Un medecin (radiologie) voit la liste des patients d'un medecin qui appartient a un service different (ophtalmologie par exemple), ce n'est pas normal.
+
+
+Le lien jitsi meet n'est pas généré a la creation d'une consultation ou d'un rendez-vous de type video
+
+Une erreur est generee quand l'infirmier essaie d'ouvrir le dossier d'un patient. On voit la page mais on a aussi une notification access denied.
+
+Je ne vois pas la liste des médecins pour en selectionner un lors d'un rendez-vous, je vais essayer de créer un nouveau compte medecin
+
+Permets de voir les details d'un rendez-vous si on appuie dessus
+
+Le dropdown des regions n'a que 3 regions dakar, thies, saint-louis. Ce n'est pas normal
+
+Ameliorer la mise en forme des dropdown (surtout celui des hôpitaux) et permettre a l'utilisateur d'ecrire et de voir les hôpitaux sur le dropdown qui corrspondent aux lettres sur sa recherche
+
+Les hôpitaux dans le dropdown d'inscription ne correspondent pas a ceux dans la table ordre_medecins
+
+On a la possibilité de mettre un hospital provenant du dropdown, different du vrai hospital du medecin sur la table ordre_medecins, ce n'est pas normal. Corrige ca.
+
+Change la formulation de cette erreur "Vous devez utiliser votre adresse email institutionnelle : niba.abdelkader@medisen.sn. Contactez l'administration si vous ne l'avez pas reçue.", le vrai mail ne doit pas s'afficher pour des mesures de sécurité. Tu peux juste mettre "Informations fournies incorrectes... something like this"
+
+Mettre par defaut l'hôpital ou le medecin connecté se trouve comme etablissement source non modifiable s'il veut effectuer un transfert
+
+Quand j'ouvre la liste des patients en tant que medecin, erreur :
+
+Une erreur interne est survenue (JDBC exception executing SQL [ERROR: missing FROM-clause entry for table "m1_1" Position: 319] [select distinct p1_0.id,p1_1.actif,p1_1.adresse_id,p1_1.created_at,p1_1.email,p1_1.mfa_actif,p1_1.mot_de_passe,p1_1.nom,p1_1.prenom,p1_1.role,p1_1.telephone,p1_1.updated_at,p1_0.assurance,p1_0.cree_par,p1_0.date_naissance,p1_0.groupe_sanguin,p1_0.numero_patient,p1_0.sexe from consultations c1_0 join medecins m1_0 on m1_1.user_id=c1_0.medecin_id join patient p1_0 on p1_0.id=c1_0.patient_id join users p1_1 on p1_0.id=p1_1.user_id where m1_0.specialite=?]; SQL [select distinct p1_0.id,p1_1.actif,p1_1.adresse_id,p1_1.created_at,p1_1.email,p1_1.mfa_actif,p1_1.mot_de_passe,p1_1.nom,p1_1.prenom,p1_1.role,p1_1.telephone,p1_1.updated_at,p1_0.assurance,p1_0.cree_par,p1_0.date_naissance,p1_0.groupe_sanguin,p1_0.numero_patient,p1_0.sexe from consultations c1_0 join medecins m1_0 on m1_1.user_id=c1_0.medecin_id join patient p1_0 on p1_0.id=c1_0.patient_id join users p1_1 on p1_0.id=p1_1.user_id where m1_0.specialite=?])
+
+La signature numerique pour les ordonnances n'est pas faite. L'ordonnance emise pour l'impression en pdf ne contient AUCUNE LIGNE DE PRESCRIPTION, AUCUN MEDICAMENT, AUCUN NOM DE MEDECIN, AUCUN HOPITAL, AUCUNE DATE, AUCUNE INFORMATION EN GROS
