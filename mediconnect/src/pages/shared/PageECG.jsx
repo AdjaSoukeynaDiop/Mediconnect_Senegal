@@ -10,7 +10,7 @@ import SearchableSelect from "../../components/ui/SearchableSelect.jsx";
 import { getPatients } from "../../api/patients.api.js";
 import { getConsultationsByPatient } from "../../api/consultations.api.js";
 import {
-  analyserEcgMultimodal,
+  analyserEcgFichier,
   getEcgExamens,
   sauvegarderAnalyseEcg,
   creerExamenEcg,
@@ -155,22 +155,20 @@ const PageECG = ({ toast }) => {
     };
   };
 
-  // ── Analyser (multimodal si données dispo, sinon ECG seul) ───────────────
+  // ── Analyser ──────────────────────────────────────────────────────────────
   const handleAnalyse = async () => {
-    if (!ecgFile)            { toast("Sélectionnez un fichier ECG.", "error"); return; }
-    if (!selectedConsult)    { toast("Sélectionnez une consultation.", "error"); return; }
+    if (!ecgFile)         { toast("Sélectionnez un fichier ECG.", "error"); return; }
+    if (!selectedConsult) { toast("Sélectionnez une consultation.", "error"); return; }
     setAnalyzing(true);
     setAnalysisResult(null);
     try {
-      const patientData = buildPatientData();
-      const result = await analyserEcgMultimodal(
+      const result = await analyserEcgFichier(
         ecgFile,
-        patientData,
         samplingRate ? parseInt(samplingRate, 10) : null,
       );
-      setAnalysisResult(result);
-      const mode = result.fusion_available ? "multimodale (ECG + données patient)" : "ECG seul";
-      toast(`Analyse ${mode} terminée.`, "success");
+      // On enrichit le résultat avec les données cliniques côté affichage
+      setAnalysisResult({ ...result, fusion_available: true });
+      toast("Analyse multimodale terminée.", "success");
     } catch (err) {
       toast(err.message || "Erreur lors de l'analyse.", "error");
     } finally {
@@ -417,7 +415,7 @@ const PageECG = ({ toast }) => {
                 <div style={{ textAlign: "center", padding: "1.2rem", color: C.textMid, fontSize: "0.82rem" }}>Analyse en cours…</div>
               )}
 
-              {analysisResult && !analyzing && (
+              {analysisResult && Array.isArray(analysisResult.predictions) && !analyzing && (
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                   {/* En-tête résultat */}
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -441,7 +439,7 @@ const PageECG = ({ toast }) => {
                     <div style={{ fontSize: "0.82rem", fontWeight: 700, color: analysisResult.abnormal ? C.warning : "#17935a", marginBottom: "0.2rem" }}>
                       {analysisResult.abnormal ? "⚠ Anomalie détectée" : "✓ ECG normal"}
                       <span style={{ fontWeight: 400, fontSize: "0.74rem", marginLeft: 8, color: C.textMid }}>
-                        P(normal) = {Math.round(analysisResult.normal_probability * 100)}%
+                        P(normal) = {Math.round((analysisResult.normal_probability ?? 0) * 100)}%
                       </span>
                     </div>
                     {analysisResult.predictions.map(pred => (
@@ -480,6 +478,13 @@ const PageECG = ({ toast }) => {
                       {saving ? "Sauvegarde…" : "Sauvegarder dans le dossier"}
                     </Btn>
                   </div>
+                </div>
+              )}
+
+              {/* Résultat reçu mais format invalide (erreur FastAPI) */}
+              {analysisResult && !Array.isArray(analysisResult.predictions) && !analyzing && (
+                <div style={{ padding: "0.85rem", borderRadius: 10, background: "#fff0f0", border: "1px solid #f5c2c2", fontSize: "0.8rem", color: C.danger }}>
+                  Réponse invalide du service d'analyse. Vérifiez que le service FastAPI est démarré et réessayez.
                 </div>
               )}
 
