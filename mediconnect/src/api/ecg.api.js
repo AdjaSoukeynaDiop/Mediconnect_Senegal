@@ -44,6 +44,28 @@ export const analyserEcgFichier = async (file, samplingRate = null, threshold = 
   // { predictions: [{code, label, probability, positive}], abnormal, normal_probability, source }
 };
 
+// ── FastAPI : analyse multimodale (fichier ECG + données cliniques patient) ──
+// patientData : { age, sex, poids?, taille?, frequence_cardiaque?,
+//                 tension_arterielle?, spo2?, temperature? }
+export const analyserEcgMultimodal = async (file, patientData, samplingRate = null, threshold = 0.5) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("patient_data", JSON.stringify(patientData));
+  if (samplingRate) formData.append("sampling_rate", String(samplingRate));
+  formData.append("threshold", String(threshold));
+
+  const res = await fetch(`${ECG_SERVICE_URL}/predict/multimodal`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Erreur ${res.status} lors de l'analyse multimodale`);
+  }
+  return res.json();
+  // { predictions, abnormal, normal_probability, fusion_available, source }
+};
+
 // ── FastAPI : analyser un signal brut 12×N ───────────────────────────────────
 export const analyserEcgSignal = async (signal, samplingRate = 500, threshold = 0.5) => {
   const res = await fetch(`${ECG_SERVICE_URL}/predict`, {
@@ -72,10 +94,11 @@ export const getEcgByPatient = async (patientId) => {
 };
 
 // ── Spring Boot : sauvegarder le résultat IA dans un examen existant ─────────
+// analyseResult : { predictions, abnormal, normal_probability, fusion_available, source }
 export const sauvegarderAnalyseEcg = async (examenId, analyseResult) => {
   const payload = {
-    analyseIaJson: JSON.stringify(analyseResult),
-    analyseIaAnomalie: analyseResult.abnormal,
+    analyseIaJson:      JSON.stringify(analyseResult),
+    analyseIaAnomalie:  analyseResult.abnormal,
     analyseIaConfiance: analyseResult.normal_probability,
   };
   const { data } = await client.patch(`/api/examens/${examenId}/ecg-resultat`, payload);

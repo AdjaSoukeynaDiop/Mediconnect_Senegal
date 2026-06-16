@@ -48,3 +48,11 @@ export const acquitterAlerte = async (id) => {
   const { data } = await client.patch(`/api/alertes/${id}/acquitter`);
   return data?.data ?? data;
 };
+
+// POST /api/alertes — Créer une alerte clinique
+// payload : { patientId, consultationId?, niveau, message, source }
+// niveau  : "CRITIQUE" | "URGENT" | "INFO"
+export const creerAlerte = async (payload) => {
+  const { data } = await client.post("/api/alertes", payload);
+  return data?.data ?? data; // AlerteResponse
+};

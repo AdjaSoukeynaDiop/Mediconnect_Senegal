@@ -21,6 +21,7 @@ const SearchableSelect = ({
   disabled = false,
   label,
   required = false,
+  style = {},
 }) => {
   const [query, setQuery] = useState("");
   const [open,  setOpen]  = useState(false);
@@ -63,7 +64,7 @@ const SearchableSelect = ({
   };
 
   return (
-    <div style={{ marginBottom: "1rem" }}>
+    <div style={{ marginBottom: "1rem", ...style }}>
       {label && (
         <label style={labelStyle}>
           {label} {required && <span style={{ color: "#e53e3e" }}>*</span>}
