@@ -5,11 +5,16 @@
  * Spring Boot (port 8080)              — persistance & historique
  *
  * FastAPI endpoints :
- *   GET  /health                → { status, model_loaded }
- *   POST /predict               → { predictions, abnormal, normal_probability }
- *   POST /predict/file          → même structure + source.{filename, sampling_rate}
+ *   GET  /health                    → { status, model_loaded }
+ *   POST /predict                   → PredictResponse (signal JSON brut)
+ *   POST /predict/file              → PredictResponse (upload fichier)
+ *   POST /predict/multimodal        → PredictResponse (fichier + patient_data)
  *
- * Spring Boot endpoints ajoutés :
+ * PredictResponse :
+ *   { subclass_predictions, groups, superclasses, abnormal, normal_probability,
+ *     fusion_available, alert:{niveau,message,facteurs,source}, quality, source }
+ *
+ * Spring Boot endpoints :
  *   GET   /api/examens/type/ecg          → List<ExamenResponse>
  *   PATCH /api/examens/{id}/ecg-resultat → ExamenResponse
  */
@@ -40,8 +45,7 @@ export const analyserEcgFichier = async (file, samplingRate = null, threshold = 
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || `Erreur ${res.status} lors de l'analyse ECG`);
   }
-  return res.json();
-  // { predictions: [{code, label, probability, positive}], abnormal, normal_probability, source }
+  return res.json(); // PredictResponse
 };
 
 // ── FastAPI : analyse multimodale (fichier ECG + données cliniques patient) ──
@@ -62,8 +66,7 @@ export const analyserEcgMultimodal = async (file, patientData, samplingRate = nu
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || `Erreur ${res.status} lors de l'analyse multimodale`);
   }
-  return res.json();
-  // { predictions, abnormal, normal_probability, fusion_available, source }
+  return res.json(); // PredictResponse
 };
 
 // ── FastAPI : analyser un signal brut 12×N ───────────────────────────────────
@@ -94,7 +97,7 @@ export const getEcgByPatient = async (patientId) => {
 };
 
 // ── Spring Boot : sauvegarder le résultat IA dans un examen existant ─────────
-// analyseResult : { predictions, abnormal, normal_probability, fusion_available, source }
+// analyseResult : PredictResponse (toute la réponse du service IA)
 export const sauvegarderAnalyseEcg = async (examenId, analyseResult) => {
   const payload = {
     analyseIaJson:      JSON.stringify(analyseResult),
